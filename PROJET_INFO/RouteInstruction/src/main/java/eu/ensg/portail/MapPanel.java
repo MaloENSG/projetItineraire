@@ -53,6 +53,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import org.geotools.geometry.jts.JTS;
@@ -61,6 +62,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+
+import ElementInterface.RectPanel;
 
 
 
@@ -240,7 +243,7 @@ public class MapPanel extends JPanel {
         }
 
 	    setLayout(new MapLayout());
-	    setOpaque(true);
+	    setOpaque(false);
 	    setBackground(new Color(0xc0, 0xc0, 0xc0));
 	    add(overlayPanel);
 	    add(controlPanel);
@@ -1263,6 +1266,13 @@ public class MapPanel extends JPanel {
 			b.setRolloverIcon(new ImageIcon(hl));
 			return b;
 		}
+		
+		private JButton makeButtonIt(Action action, String textBT) {
+			JButton b = new JButton(action);
+			
+			
+			return b;
+		}
 
 		public ControlPanel() {
 			setOpaque(false);
@@ -1272,7 +1282,7 @@ public class MapPanel extends JPanel {
 
 			Action zoomInAction = new AbstractAction() {
 				{
-					String text = "Zoom In";
+					String text = "Zoom";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makePlus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1284,7 +1294,7 @@ public class MapPanel extends JPanel {
 			};
 			Action zoomOutAction = new AbstractAction() {
 				{
-					String text = "Zoom Out";
+					String text = "Dezoom";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeMinus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1297,7 +1307,7 @@ public class MapPanel extends JPanel {
 
 			Action upAction = new AbstractAction() {
 				{
-					String text = "Up";
+					String text = "Haut";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1310,7 +1320,7 @@ public class MapPanel extends JPanel {
 			};
 			Action downAction = new AbstractAction() {
 				{
-					String text = "Down";
+					String text = "Bas";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, true)));
@@ -1323,7 +1333,7 @@ public class MapPanel extends JPanel {
 			};
 			Action leftAction = new AbstractAction() {
 				{
-					String text = "Left";
+					String text = "Gauche";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1336,7 +1346,7 @@ public class MapPanel extends JPanel {
 			};
 			Action rightAction = new AbstractAction() {
 				{
-					String text = "Right";
+					String text = "Droite";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), true, false)));
@@ -1351,7 +1361,7 @@ public class MapPanel extends JPanel {
 			moves.setOpaque(false);
 			JPanel zooms = new JPanel(new BorderLayout(0, 0));
 			zooms.setOpaque(false);
-			zooms.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
+			zooms.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 			moves.add(makeButton(upAction), BorderLayout.NORTH);
 			moves.add(makeButton(leftAction), BorderLayout.WEST);
 			moves.add(makeButton(downAction), BorderLayout.SOUTH);
@@ -1359,7 +1369,21 @@ public class MapPanel extends JPanel {
 			zooms.add(makeButton(zoomInAction), BorderLayout.NORTH);
 			zooms.add(makeButton(zoomOutAction), BorderLayout.SOUTH);
 			add(moves, BorderLayout.NORTH);
-			add(zooms, BorderLayout.SOUTH);
+			add(zooms, BorderLayout.CENTER);
+			
+			JPanel coords = new JPanel(new BorderLayout());
+			coords.setOpaque(false);
+			coords.add(makeButtonIt(upAction,"Entree"), BorderLayout.SOUTH);
+			
+			RectPanel rect = new RectPanel();
+			add(rect);
+			
+			RectPanel rect2 = new RectPanel();
+			add(rect2);
+			
+			JTextField text = new JTextField();
+	        text.setBounds(20,160,100,20);
+	        add(text);
 		}
 
 		public void paint(Graphics gOrig) {

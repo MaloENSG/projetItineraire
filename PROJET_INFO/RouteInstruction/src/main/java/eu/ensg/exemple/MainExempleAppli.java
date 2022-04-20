@@ -9,6 +9,8 @@
  ******************************************************************************/
 package eu.ensg.exemple;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,13 +18,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import ElementInterface.RectPanel;
+//import Affichage.MyButton;
 import eu.ensg.portail.MapPanel;
 
 
@@ -57,7 +63,7 @@ public class MainExempleAppli {
         // ======================================================
         //    
 		final JFrame fen = new JFrame();
-		fen.setSize(1000, 800);
+		fen.setSize(1200, 800);
 
 		// just a JPanel extension, add to any swing/awt container
 		final MapPanel mapPanel = new MapPanel(); 
@@ -86,6 +92,17 @@ public class MainExempleAppli {
         JMenu tileServerMenu = new JMenu("Autres");
         menuBar.add(tileServerMenu);
         fen.setJMenuBar(menuBar);
+        
+        // Ajout de bouton sur la fenetre
+        JButton btn = new JButton("Afficher point");
+	    btn.setBounds(20,250,100,30);
+        fen.add(btn);
+        
+        // Ajout champs texte
+        JTextField text = new JTextField();
+        text.setBounds(20,160,100,20);
+        fen.add(text);
+        
         
 
 		mapPanel.setZoom(15); // set some zoom level (1-18 are valid)
