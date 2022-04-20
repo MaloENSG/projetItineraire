@@ -14,15 +14,17 @@ import eu.ensg.osm.Distance;
 
 public class MainExampleOpenStreetMap {
 	
-	private static double E = 2.59042;
-	private static double O = 2.58640;
-	private static double S = 48.84051;
-	private static double N = 48.84202;
+	private static double E = 0.205542;
+	private static double O = 0.203542;
+	private static double S = 48.012701;
+	private static double N = 48.014701;
+	
+	
 	
 	private static double lonpro;
 	private static double latpro;
 	private static String clepro;
-	private static String valpro;
+	private static String valproc;
 
 	public static void main(String[] args) throws ParserConfigurationException {
 		
@@ -82,14 +84,14 @@ public class MainExampleOpenStreetMap {
 							lonpro = lon;
 							latpro = lat;
 							clepro = cle;
-							valpro = val;
+							valproc = val;
 						}
 					}
 						
 		    	}
 		    	
 		    }
-		    System.out.println(clepro + "--" + valpro);
+		    System.out.println(clepro + "--" + valproc);
 			System.out.println(lonpro + "," + latpro);
 		} catch (Exception e) {
 			e.printStackTrace();
