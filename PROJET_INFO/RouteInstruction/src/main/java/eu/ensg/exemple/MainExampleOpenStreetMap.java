@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import eu.ensg.osm.HttpClientOsm;
+import eu.ensg.osm.Distance;
 
 public class MainExampleOpenStreetMap {
 	
@@ -17,6 +18,11 @@ public class MainExampleOpenStreetMap {
 	private static double O = 2.58640;
 	private static double S = 48.84051;
 	private static double N = 48.84202;
+	
+	private static double lonpro;
+	private static double latpro;
+	private static String clepro;
+	private static String valpro;
 
 	public static void main(String[] args) throws ParserConfigurationException {
 		
@@ -38,7 +44,11 @@ public class MainExampleOpenStreetMap {
 			Document doc = builder.parse(new ByteArrayInputStream(xmldata.getBytes()));
 			doc.getDocumentElement().normalize();
 		    Element root = (Element) doc.getElementsByTagName("osm").item(0);
-		
+		    
+			double min = Distance.dist(S,E,N,O);
+		    double middlon = (E + O)/2;
+			double middlat = (S + N)/2;
+				
 		    int nbNoeuds = root.getElementsByTagName("node").getLength();
 		    for (int i = 0; i < nbNoeuds; i++) {
 
@@ -51,7 +61,8 @@ public class MainExampleOpenStreetMap {
 		    	double lat = Double.valueOf(elem.getAttribute("lat"));
 		    	double lon = Double.valueOf(elem.getAttribute("lon"));
 		    	
-		    	
+
+				
 		    	for (int j = 0; j < elem.getElementsByTagName("tag").getLength(); j++) {
 					Element tagElem = (Element) elem.getElementsByTagName("tag").item(j);
 					String cle = tagElem.getAttribute("k");
@@ -60,11 +71,26 @@ public class MainExampleOpenStreetMap {
 					if (cle.equals("name")) {
 						System.out.println(cle + "--" + val);
 						System.out.println(lon + "," + lat);
+						
+						double distance = Distance.dist(lat, lon, middlat, middlon);
+						System.out.println(min);
+						System.out.println(distance);
+
+						if(min>distance) {
+							min = distance;
+							System.out.println(min);
+							lonpro = lon;
+							latpro = lat;
+							clepro = cle;
+							valpro = val;
+						}
 					}
 						
 		    	}
 		    	
 		    }
+		    System.out.println(clepro + "--" + valpro);
+			System.out.println(lonpro + "," + latpro);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
