@@ -1,6 +1,7 @@
 package eu.ensg.exemple;
 
 import java.io.ByteArrayInputStream;
+import java.text.BreakIterator;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,13 +44,25 @@ public class MainNoeFaitDesTrucs {
 			double lat = Double.parseDouble(start[1]);
 			String[] end = portion.getEnd().split(",");
 			
+			String nompro = "test";
+			String natpro = "test";
+			int o = 0;
+			
 			for (Step step : portion.getSteps()) {
+				o += 1;
 				List<Double[]> coords = step.getGeometry().getCoordinates();
 				double dist = step.getDistance();
 				String nom = step.getAttributes().getNom();
 				String nat = step.getAttributes().getNature();
 				if(nom != "") {System.out.println("Avancer de "+dist+" m dans "+nom);}
 				else {System.out.println("Avancer de "+dist+" m dans "+nat);}
+				
+				nompro = portion.getSteps().get(o).getAttributes().getNom();
+				natpro = portion.getSteps().get(o).getAttributes().getNature();
+				
+				if(nom.equals(nompro) && nat.equals(natpro) ) {
+					System.out.println("Continuer dans la rue");
+				}else {
 				
 				//Choix batiment & determination de sa direction visuelle
 				Double[] dercoord = coords.get(coords.size()-1);
@@ -58,10 +71,6 @@ public class MainNoeFaitDesTrucs {
 				double O = dercoord[0]-0.002;
 				double S = dercoord[1]-0.002;
 				double N = dercoord[1]+0.002;
-				System.out.println(E);
-				System.out.println(O);
-				System.out.println(S);
-				System.out.println(N);
 				
 				String valpro="";
 
@@ -106,8 +115,10 @@ public class MainNoeFaitDesTrucs {
 								Element tagElem = (Element) elem.getElementsByTagName("tag").item(j);
 								String cle = tagElem.getAttribute("k");
 								String val = tagElem.getAttribute("v");
+								String[] amen = {"bar", "biergaten", "cafe", "fast_food", "ice_cream", "pub", "restaurant", "college", "driving_school", "kindergarten", "library", "music_school", "school", "university", "taxi", "bank", "clinic", "dentist", "doctors", "hospital", "nursing_home", "pharmacy", "veterinary", "arts_centre", "casino", "cinema", "fountain", "nightclub", "planetarium", "stripclub", "studio", "theatre", "courthouse", "embassy", "fire_station", "police", "post_box", "post_office", "prison", "townhall", "crematorium", "funeral_hall", "grave_yard", "gym", "marketplace", "monastery"};
 								
-								if (cle.equals("name")) {
+								for (int u = 0; u<amen.length;u++) {
+								if (cle.equals("name") || (cle.equals("amenity")&& val.equals(amen[u]))) {
 									double distance = Distance.dist(latit, longit, middlat, middlon);
 
 									if(min>distance) {
@@ -115,7 +126,7 @@ public class MainNoeFaitDesTrucs {
 										valpro = val;
 									}
 								}
-									
+								}		
 					    	}
 					    	
 					    }
@@ -123,7 +134,8 @@ public class MainNoeFaitDesTrucs {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-			Thread.sleep(9000);	//Faut ajouter du temps
+			Thread.sleep(25000);//Faut ajouter du temps
+			}
 			}
 			}
 		}
