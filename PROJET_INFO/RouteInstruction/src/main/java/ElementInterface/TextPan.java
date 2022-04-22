@@ -6,17 +6,17 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 public class TextPan extends JPanel{
-	private void doDrawing(Graphics g) {
+	private void doDrawing(Graphics g,String texte) {
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawString("Départ", 50, 50);
+        g2d.drawString(texte, 50, 50);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
+    
+    public void paintComponent(Graphics g,String texte) {
 
         super.paintComponent(g);
-        doDrawing(g);
+        doDrawing(g,texte);
     }
 
 }

@@ -101,7 +101,7 @@ public class MainExempleAppli {
         // Ajout champs texte
         JTextField text = new JTextField();
         text.setBounds(20,160,100,20);
-        fen.add(text);
+        //fen.add(text);
         
         
 
