@@ -480,16 +480,30 @@ public class MapPanel extends JPanel {
 		Graphics2D g = (Graphics2D) gOrig.create();
 		try {
 			paintInternal(g);
-			// paintAppliInstruction(g);
+			paintAppliInstruction(g); // Utilisation de la methode de dessin
 		} finally {
 			g.dispose();
 		}
 	}
 	
-	// private void paintAppliInstruction(Graphics2D g2d) {
+	private void paintAppliInstruction(Graphics2D g2d) {
 		// Si besoin !
 		// Ecrire le code de l'appli qui dessine sur la carte
-	// }
+		
+		int w = this.getWidth();
+		int h = this.getHeight();
+		
+		double lon = 0.19556;
+		double lat = 48.00611;
+		Point centre = getCenterPosition();
+		
+		int x = lon2position(lon,getZoom()) - centre.x + getWidth()/2;
+		int y = lat2position(lat,getZoom()) - centre.y + getWidth()/2;
+		
+		
+		g2d.setPaint (Color.red);
+		g2d.drawLine(x, y, x+5, y+5);
+	}
 	
 	
 	private static final class Painter {
@@ -556,7 +570,7 @@ public class MapPanel extends JPanel {
 				if (getScale() == 1d && mapPanel.magnifyRegion != null) {
 					Rectangle magnifyRegion = new Rectangle(mapPanel.magnifyRegion);
 					magnifyRegion.translate(-mapPosition.x, -mapPosition.y);
-					g.setColor(Color.yellow);
+					g.setColor(Color.red);
 				}
 			} finally {
 				g.dispose();

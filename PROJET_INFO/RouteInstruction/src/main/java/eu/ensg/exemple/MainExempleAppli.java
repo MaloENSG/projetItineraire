@@ -123,6 +123,8 @@ public class MainExempleAppli {
 				Point p = e.getPoint();
 				System.out.println("Les coordonnées graphiques de la souris: " + p.x + "," + p.y);
 				// mapPanel.repaint();
+				Point.Double k = mapPanel.getLongitudeLatitude(p);
+				System.out.println(k);
 			}
 			
 			public void mouseExited(MouseEvent e) {
