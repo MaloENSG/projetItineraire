@@ -1,5 +1,6 @@
 package eu.ensg.ign;
 
+import java.awt.Point;
 import java.util.Arrays;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -18,7 +19,7 @@ public class Itineraire {
 		this.pointarrivee=pointarrivee;
 	}
 	
-	public Resultat getItineraire() {
+	public Resultat getResultat() {
 		String url = "https://wxs.ign.fr/calcul/geoportail/itineraire/rest/1.0.0/route?resource=bdtopo-pgr"
 			+ "&profile=pedestrian&optimization=fastest"
 			+ "&start=" + pointdepart.x +"," +pointdepart.y + "&end=" +  pointarrivee.x +"," +pointarrivee.y
@@ -34,7 +35,7 @@ public class Itineraire {
 	@Override
 	public String toString() {
 		String str="";
-		for (Portion portion : this.getItineraire().getPortions()) {
+		for (Portion portion : this.getResultat().getPortions()) {
 
 			String[] start = portion.getStart().split(",");
 			double lon = Double.parseDouble(start[0]);

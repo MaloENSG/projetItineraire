@@ -1,5 +1,6 @@
 package eu.ensg.exemple;
 
+
 import java.io.ByteArrayInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,10 +45,10 @@ public class MainExampleOpenStreetMap {
 
 		    	Element elem = (Element) root.getElementsByTagName("node").item(i);
 
-		    	// On récupère son ID
+		    	// On rÃ©cupÃ¨re son ID
 		    	long id = Long.valueOf(elem.getAttribute("id"));
 
-		    	// on récupère sa géométrie
+		    	// on rÃ©cupÃ¨re sa gÃ©omÃ©trie
 		    	double lat = Double.valueOf(elem.getAttribute("lat"));
 		    	double lon = Double.valueOf(elem.getAttribute("lon"));
 		    	
@@ -70,4 +71,3 @@ public class MainExampleOpenStreetMap {
 		}
 	}
 }
-

@@ -39,10 +39,12 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,6 +63,11 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+
+import eu.ensg.ign.Itineraire;
+import eu.ensg.ign.Portion;
+import eu.ensg.ign.Resultat;
+import eu.ensg.ign.Step;
 
 
 
@@ -411,7 +418,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() + 1);
-		setMapPosition(mapPosition.x * 2 + dx, mapPosition.y * 2 + dy);
+		setMapPosition(mapPosition.x * 2 +dx, mapPosition.y * 2+dy );
 		repaint();
 	}
 
@@ -422,7 +429,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() - 1);
-		setMapPosition((mapPosition.x - dx) / 2, (mapPosition.y - dy) / 2);
+		setMapPosition((mapPosition.x-dx ) / 2, (mapPosition.y -dy) / 2);
 		repaint();
 	}
 
@@ -451,7 +458,7 @@ public class MapPanel extends JPanel {
 	}
 
 	public Point getCenterPosition() {
-		return new Point(mapPosition.x + getWidth() / 2, mapPosition.y + getHeight() / 2);
+		return new Point(mapPosition.x, mapPosition.y);
 	}
 
 	public void setCenterPosition(Point p) {
@@ -475,17 +482,67 @@ public class MapPanel extends JPanel {
 		Graphics2D g = (Graphics2D) gOrig.create();
 		try {
 			paintInternal(g);
-			// paintAppliInstruction(g);
+			paintAppliInstruction(g);
 		} finally {
 			g.dispose();
 		}
 	}
 	
-	// private void paintAppliInstruction(Graphics2D g2d) {
-		// Si besoin !
-		// Ecrire le code de l'appli qui dessine sur la carte
-	// }
+	/**
+	 * @param g2d
+	 */
+	private void paintAppliInstruction(Graphics2D g2d) {
 	
+		g2d. setPaint (Color. red ); 
+		int w = this.getWidth();
+		int h = this.getHeight();
+		double lon =0.2046;
+		double lat = 48.01376;
+		Point centre=getCenterPosition();
+
+		int x=lon2position(lon, getZoom())-centre.x+w/2;
+		int y=lat2position(lat, getZoom())-centre.y+h/2;
+
+
+		BasicStroke line = new BasicStroke(8.0f);
+		g2d.setStroke(line);
+		g2d.drawLine(x, y, x, y );
+
+			
+//		Coordinate C1= new Coordinate(0.2046,48.0137);
+//		Coordinate C2 = new Coordinate(0.1839,48.0070);
+//		Itineraire iti = new Itineraire(C1, C2);
+//			
+//		Resultat resultat= iti.getResultat();
+//		BasicStroke line = new BasicStroke(2.0f);
+//		g2d.setStroke(line);
+//		
+//
+//
+//		List<Double[]> coords = resultat.getGeometry().getCoordinates();
+//		for (int i =0;i<coords.size()-1; i++) {
+//			Double[] point1 = coords.get(i);
+//			Double[] point2 = coords.get(i+1);
+//				
+//			double lon1=point1[0];
+//			double lat1=point1[1];
+//			double lon2=point2[0];
+//			double lat2=point2[1];
+//				
+//				
+//			Point centre=getCenterPosition();
+//
+//				
+//			int x1=lon2position(lon1, getZoom())-centre.x+w/2;
+//			int y1=lat2position(lat1, getZoom())-centre.y+h/2;
+//			int x2=lon2position(lon2, getZoom())-centre.x+w/2;
+//			int y2=lat2position(lat2, getZoom())-centre.y+h/2;
+//
+//			g2d.drawLine(x1, y1, x2, y2 );
+//			
+//		
+//		}
+	}
 	
 	private static final class Painter {
 		private final int zoom;
@@ -603,6 +660,12 @@ public class MapPanel extends JPanel {
 
 
 	}
+
+	private int getHeigth() {
+		// TODO Auto-generated method stub
+		return super.getHeight();
+	}
+
 
 	private void paintInternal(Graphics2D g) {
 		stats.reset();
@@ -1372,9 +1435,15 @@ public class MapPanel extends JPanel {
 				g.dispose();
 			}
 			super.paint(gOrig);
+		
+
+		}
+
+		private int geHeigth() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}
-
 
 	private final class MapLayout implements LayoutManager {
 
@@ -1399,7 +1468,10 @@ public class MapPanel extends JPanel {
 				controlPanel.setBounds(20, 20, psize.width, psize.height);
 			}
 		}
+	
+
 	}
+
 
 }
 

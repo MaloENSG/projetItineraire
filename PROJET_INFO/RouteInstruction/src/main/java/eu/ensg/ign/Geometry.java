@@ -2,6 +2,9 @@ package eu.ensg.ign;
 
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
+
+
 public class Geometry {
 	
 	private String type;

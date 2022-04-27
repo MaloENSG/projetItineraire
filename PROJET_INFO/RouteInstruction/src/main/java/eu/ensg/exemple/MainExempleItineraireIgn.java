@@ -1,20 +1,8 @@
 package eu.ensg.exemple;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.locationtech.jts.geom.Coordinate;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import eu.ensg.ign.Geometry;
-import eu.ensg.ign.HttpClientIgn;
 import eu.ensg.ign.Itineraire;
-import eu.ensg.ign.Portion;
-import eu.ensg.ign.Resultat;
-import eu.ensg.ign.Step;
-
 
 public class MainExempleItineraireIgn {
 

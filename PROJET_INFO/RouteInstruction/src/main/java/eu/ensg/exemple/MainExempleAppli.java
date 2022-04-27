@@ -53,15 +53,15 @@ public class MainExempleAppli {
 			e.printStackTrace();
 		}
 
+		
         
         // ======================================================
         //    
 		final JFrame fen = new JFrame();
-		fen.setSize(1000, 800);
+		fen.setSize(500, 500);
 
 		// just a JPanel extension, add to any swing/awt container
 		final MapPanel mapPanel = new MapPanel(); 
-
 		fen.setContentPane(mapPanel);
 		fen.setLocationRelativeTo(null);
 		fen.setResizable(false);
@@ -89,14 +89,17 @@ public class MainExempleAppli {
         
 
 		mapPanel.setZoom(15); // set some zoom level (1-18 are valid)
-		double lon = 0.199556;
-		double lat = 48.00611;
+		double lon =0.2046;
+		double lat = 48.01376;
 		Point position = mapPanel.computePosition(new Point2D.Double(lon, lat));
+		System.out.println(position);
 		mapPanel.setCenterPosition(position); // sets to the computed position
-		mapPanel.repaint(); // if already visible trigger a repaint here
+
+		Point centre=mapPanel.getCenterPosition();
+		System.out.println(centre);
+		//mapPanel.repaint(); // if already visible trigger a repaint here
 
 		fen.setVisible(true);
-		
 		
 		mapPanel.addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent e) {
@@ -105,9 +108,20 @@ public class MainExempleAppli {
 			public void mousePressed(MouseEvent e) {
 				Point p = e.getPoint();
 				System.out.println("Les coordonnées graphiques de la souris: " + p.x + "," + p.y);
-				// mapPanel.repaint();
+				Point centre=mapPanel.getCenterPosition();
+				System.out.println(centre);
+				Point addition= new Point(p.x+centre.x-mapPanel.getWidth()/2, p.y+centre.y-mapPanel.getHeight()/2);
+				Point.Double geopoint = mapPanel.getLongitudeLatitude(addition);
+
+				System.out.println(geopoint);
+				mapPanel.repaint();
 			}
 			
+			private int getHeight() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
 			public void mouseExited(MouseEvent e) {
 			}
 
