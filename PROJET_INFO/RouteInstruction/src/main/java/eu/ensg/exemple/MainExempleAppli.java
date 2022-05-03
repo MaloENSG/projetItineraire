@@ -111,10 +111,6 @@ public class MainExempleAppli {
 			
 			public void mousePressed(MouseEvent e) {
 				Point p = e.getPoint();
-				p.x=p.x;
-				p.y=p.y;
-				Graphics g =fen.getGraphics();
-
 		
 				System.out.println("Les coordonnées graphiques de la souris: " + p.x + "," + p.y);
 				Point centre=mapPanel.getCenterPosition();

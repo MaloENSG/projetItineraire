@@ -427,7 +427,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() + 1);
-		setMapPosition(mapPosition.x * 2, mapPosition.y * 2);
+		setMapPosition(mapPosition.x * 2+dx, mapPosition.y * 2+dy);
 		repaint();
 	}
 
@@ -438,7 +438,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() - 1);
-		setMapPosition((mapPosition.x ) / 2, (mapPosition.y) / 2);
+		setMapPosition((mapPosition.x-dx ) / 2, (mapPosition.y-dy) / 2);
 		repaint();
 	}
 
