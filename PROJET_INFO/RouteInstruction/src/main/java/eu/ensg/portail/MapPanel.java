@@ -163,9 +163,12 @@ public class MapPanel extends JPanel {
     	        double X0 = -20037508;
                 double Y0 = 20037508;
     	        if (coord != null) {
+    	        	log.log(Level.INFO, "coord " + coord[0] + " " + coord[1]);
     	            X0 = coord[0];
                     Y0 = coord[1];
-    	        } 
+    	        } else {
+    	        	log.log(Level.INFO, "no coord ");
+    	        }
     	        
     	        double X = targetGeometry.getX();
     	        double Y = targetGeometry.getY();
@@ -184,13 +187,19 @@ public class MapPanel extends JPanel {
 	            e.printStackTrace();
 	            return null;
 	        }
-	        
-	    } else {
-	        zoom = 18; 
-	        xtile = 90241;
-	        String url = tileServer.getURL() + "TILEMATRIX=" + zoom + "&TILEROW=" + xtile + "&TILECOL=132877";
-	        return url;
 	    }
+	    // 
+	    if (zoom == 0) {
+	        zoom = 18; 
+	    }
+	    if (xtile == 0) {
+	    	xtile = 90241; 
+	    }
+	    if (ytile == 0) {
+	    	ytile = 132877;
+	    }
+        String url = tileServer.getURL() + "TILEMATRIX=" + zoom + "&TILEROW=" + ytile + "&TILECOL=" + xtile;
+        return url;
 	}
 
 	//-------------------------------------------------------------------------
@@ -418,7 +427,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() + 1);
-		setMapPosition(mapPosition.x * 2 +dx, mapPosition.y * 2+dy );
+		setMapPosition(mapPosition.x * 2, mapPosition.y * 2);
 		repaint();
 	}
 
@@ -429,7 +438,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() - 1);
-		setMapPosition((mapPosition.x-dx ) / 2, (mapPosition.y -dy) / 2);
+		setMapPosition((mapPosition.x ) / 2, (mapPosition.y) / 2);
 		repaint();
 	}
 
@@ -458,7 +467,8 @@ public class MapPanel extends JPanel {
 	}
 
 	public Point getCenterPosition() {
-		return new Point(mapPosition.x, mapPosition.y);
+
+		return new Point(mapPosition.x+getWidth() / 2, mapPosition.y+ getHeight()/2);
 	}
 
 	public void setCenterPosition(Point p) {
@@ -496,52 +506,53 @@ public class MapPanel extends JPanel {
 		g2d. setPaint (Color. red ); 
 		int w = this.getWidth();
 		int h = this.getHeight();
-		double lon =0.2046;
-		double lat = 48.01376;
-		Point centre=getCenterPosition();
-
-		int x=lon2position(lon, getZoom())-centre.x+w/2;
-		int y=lat2position(lat, getZoom())-centre.y+h/2;
-
-
-		BasicStroke line = new BasicStroke(8.0f);
-		g2d.setStroke(line);
-		g2d.drawLine(x, y, x, y );
+//		double lon =0.2046;
+//		double lat = 48.01376;
+//		Point centre=getCenterPosition();
+//
+//		
+//		int x=lon2position(lon, getZoom())-centre.x +w/2;
+//		int y=lat2position(lat, getZoom())-centre.y +h/2;
+//
+//	
+//		BasicStroke line = new BasicStroke(8.0f);
+//		g2d.setStroke(line);
+//		g2d.drawLine(x,y, x, y );
 
 			
-//		Coordinate C1= new Coordinate(0.2046,48.0137);
-//		Coordinate C2 = new Coordinate(0.1839,48.0070);
-//		Itineraire iti = new Itineraire(C1, C2);
-//			
-//		Resultat resultat= iti.getResultat();
-//		BasicStroke line = new BasicStroke(2.0f);
-//		g2d.setStroke(line);
-//		
-//
-//
-//		List<Double[]> coords = resultat.getGeometry().getCoordinates();
-//		for (int i =0;i<coords.size()-1; i++) {
-//			Double[] point1 = coords.get(i);
-//			Double[] point2 = coords.get(i+1);
-//				
-//			double lon1=point1[0];
-//			double lat1=point1[1];
-//			double lon2=point2[0];
-//			double lat2=point2[1];
-//				
-//				
-//			Point centre=getCenterPosition();
-//
-//				
-//			int x1=lon2position(lon1, getZoom())-centre.x+w/2;
-//			int y1=lat2position(lat1, getZoom())-centre.y+h/2;
-//			int x2=lon2position(lon2, getZoom())-centre.x+w/2;
-//			int y2=lat2position(lat2, getZoom())-centre.y+h/2;
-//
-//			g2d.drawLine(x1, y1, x2, y2 );
-//			
-//		
-//		}
+		Coordinate C1= new Coordinate(0.2046,48.0137);
+		Coordinate C2 = new Coordinate(0.1839,48.0070);
+		Itineraire iti = new Itineraire(C1, C2);
+			
+		Resultat resultat= iti.getResultat();
+		BasicStroke line = new BasicStroke(2.0f);
+		g2d.setStroke(line);
+		
+
+
+		List<Double[]> coords = resultat.getGeometry().getCoordinates();
+		for (int i =0;i<coords.size()-1; i++) {
+			Double[] point1 = coords.get(i);
+			Double[] point2 = coords.get(i+1);
+				
+			double lon1=point1[0];
+			double lat1=point1[1];
+			double lon2=point2[0];
+			double lat2=point2[1];
+				
+				
+			Point centre=getCenterPosition();
+
+				
+			int x1=lon2position(lon1, getZoom())-centre.x+w/2;
+			int y1=lat2position(lat1, getZoom())-centre.y+h/2;
+			int x2=lon2position(lon2, getZoom())-centre.x+w/2;
+			int y2=lat2position(lat2, getZoom())-centre.y+h/2;
+
+			g2d.drawLine(x1, y1, x2, y2 );
+			
+		
+		}
 	}
 	
 	private static final class Painter {
@@ -632,8 +643,7 @@ public class MapPanel extends JPanel {
 				TileServer tileServer = mapPanel.getTileServer();
 				Image image = cache.get(tileServer, x, y, zoom);
 				if (image == null) {
-				    Point.Double d = mapPanel.getLongitudeLatitude(new Point((x*TILE_SIZE),(y*TILE_SIZE)));
-				    final String urlAddress = getTileString(mapPanel, mapPanel.tileServer, x, y, zoom, d);
+				    final String urlAddress = getTileString(mapPanel, mapPanel.tileServer, x, y, zoom, null);
 					try {
 						URL url = new URL(urlAddress);
 						// System.out.println(url);
@@ -662,7 +672,6 @@ public class MapPanel extends JPanel {
 	}
 
 	private int getHeigth() {
-		// TODO Auto-generated method stub
 		return super.getHeight();
 	}
 
