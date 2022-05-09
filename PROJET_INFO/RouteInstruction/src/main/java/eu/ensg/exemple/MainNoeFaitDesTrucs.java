@@ -48,15 +48,22 @@ public class MainNoeFaitDesTrucs {
 			String natpro = "test";
 			int o = 0;
 			
+			Double[] dercoord = {(double) 0,(double) 0};
+			Double[] adercoord = {(double) 0,(double) 0};
+			
 			for (Step step : portion.getSteps()) {
 				o += 1;
+				
 				List<Double[]> coords = step.getGeometry().getCoordinates();
 				double dist = step.getDistance();
 				String nom = step.getAttributes().getNom();
 				String nat = step.getAttributes().getNature();
+				
 				if(nom != "") {System.out.println("Avancer de "+dist+" m dans "+nom);}
 				else {System.out.println("Avancer de "+dist+" m dans "+nat);}
 				
+				if(o == portion.getSteps().size()) {System.out.println("Vous êtes arrivés dans la bonne rue");}
+				else {
 				nompro = portion.getSteps().get(o).getAttributes().getNom();
 				natpro = portion.getSteps().get(o).getAttributes().getNature();
 				
@@ -65,7 +72,14 @@ public class MainNoeFaitDesTrucs {
 				}else {
 				
 				//Choix batiment & determination de sa direction visuelle
-				Double[] dercoord = coords.get(coords.size()-1);
+				
+				if(coords.size()<2) {
+					adercoord = dercoord; 
+				}else {
+				adercoord = coords.get(coords.size()-2);
+				}
+				
+				dercoord = coords.get(coords.size()-1);
 				
 				double E = dercoord[0]+0.002;
 				double O = dercoord[0]-0.002;
@@ -95,6 +109,8 @@ public class MainNoeFaitDesTrucs {
 					    Element root = (Element) doc.getElementsByTagName("osm").item(0);
 					    
 						double min = Distance.dist(S,E,N,O);
+						double latmin = 0;
+						double longmin = 0;
 					    double middlon = (E + O)/2;
 						double middlat = (S + N)/2;
 							
@@ -124,17 +140,28 @@ public class MainNoeFaitDesTrucs {
 									if(min>distance) {
 										min = distance;
 										valpro = val;
+										latmin = latit;
+										longmin = longit;
 									}
 								}
 								}		
 					    	}
 					    	
 					    }
-					    System.out.println("Tourner au niveau de " + valpro);
+					    double angle = Distance.angl(dercoord[1],dercoord[0],latmin,longmin,adercoord[1],adercoord[0]);
+					    if(Math.abs(angle)>100) {
+					    	System.out.println("Tourner avant " + valpro);
+					    }else if(Math.abs(angle)<80){
+					    	System.out.println("Tourner après " + valpro);
+					    }else {
+					    	System.out.println("Tourner au niveau de " + valpro);
+					    }
+					    
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 			Thread.sleep(25000);//Faut ajouter du temps
+			}
 			}
 			}
 			}
