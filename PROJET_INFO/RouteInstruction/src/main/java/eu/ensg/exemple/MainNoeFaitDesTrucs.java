@@ -160,7 +160,7 @@ public class MainNoeFaitDesTrucs {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-			Thread.sleep(25000);//Faut ajouter du temps
+			Thread.sleep(25000);
 			}
 			}
 			}
