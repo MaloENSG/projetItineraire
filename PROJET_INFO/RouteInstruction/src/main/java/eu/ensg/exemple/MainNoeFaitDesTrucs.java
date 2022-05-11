@@ -2,6 +2,7 @@ package eu.ensg.exemple;
 
 import java.io.ByteArrayInputStream;
 import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,7 +38,13 @@ public class MainNoeFaitDesTrucs {
 		
 		Gson gson = new GsonBuilder().create();
 		Resultat itineraire = gson.fromJson(txtJson, Resultat.class);
+		
+		int p = -1;
+		
+		List<String> txtlst = new ArrayList<String>(); 
+		
 		for (Portion portion : itineraire.getPortions()) {
+			p+=1;
 			
 			String[] start = portion.getStart().split(",");
 			double lon = Double.parseDouble(start[0]);
@@ -53,14 +60,15 @@ public class MainNoeFaitDesTrucs {
 			
 			for (Step step : portion.getSteps()) {
 				o += 1;
+				String txt = "";
 				
 				List<Double[]> coords = step.getGeometry().getCoordinates();
 				double dist = step.getDistance();
 				String nom = step.getAttributes().getNom();
 				String nat = step.getAttributes().getNature();
 				
-				if(nom != "") {System.out.println("Avancer de "+dist+" m dans "+nom);}
-				else {System.out.println("Avancer de "+dist+" m dans "+nat);}
+				if(nom != "") {txt+="Avancer de "+dist+" m dans "+nom+".";}
+				else {txt+="Avancer de "+dist+" m dans "+nat+".";}
 				
 				if(o == portion.getSteps().size()) {System.out.println("Vous êtes arrivés dans la bonne rue");}
 				else {
@@ -68,7 +76,11 @@ public class MainNoeFaitDesTrucs {
 				natpro = portion.getSteps().get(o).getAttributes().getNature();
 				
 				if(nom.equals(nompro) && nat.equals(natpro) ) {
-					System.out.println("Continuer dans la rue");
+					double angle2 = Distance.angleBetweenTwoPointsWithFixedPoint(itineraire.getPortions().get(p).getSteps().get(o).getGeometry().getCoordinates().get(0)[1],itineraire.getPortions().get(p).getSteps().get(o).getGeometry().getCoordinates().get(0)[0],adercoord[1],adercoord[0],dercoord[1],dercoord[0]);
+					if((angle2*180/Math.PI)>200) {txt += "Continuer à droite dans la même rue";}
+					else if((angle2*180/Math.PI)<160){txt += "Continuer à gauche dans la même rue";}
+					else {txt += "Continuer tout droit dans la même rue";}
+					System.out.println(txt);
 				}else {
 				
 				//Choix batiment & determination de sa direction visuelle
@@ -148,14 +160,26 @@ public class MainNoeFaitDesTrucs {
 					    	}
 					    	
 					    }
-					    double angle = Distance.angl(dercoord[1],dercoord[0],latmin,longmin,adercoord[1],adercoord[0]);
-					    if(Math.abs(angle)>100) {
-					    	System.out.println("Tourner avant " + valpro);
-					    }else if(Math.abs(angle)<80){
-					    	System.out.println("Tourner après " + valpro);
+					    double angle1 = Distance.angleBetweenTwoPointsWithFixedPoint(latmin,longmin,adercoord[1],adercoord[0],dercoord[1],dercoord[0]);
+					    double angle2 = Distance.angleBetweenTwoPointsWithFixedPoint(itineraire.getPortions().get(p).getSteps().get(o).getGeometry().getCoordinates().get(0)[1],itineraire.getPortions().get(p).getSteps().get(o).getGeometry().getCoordinates().get(0)[0],adercoord[1],adercoord[0],dercoord[1],dercoord[0]);
+					    
+//					    System.out.println(Math.toDegrees(angle1));
+//					    System.out.println(Math.toDegrees(angle2));
+					    
+					    if((angle2*180/Math.PI)>200) {txt+= "Tourner à droite";}
+					    else if((angle2*180/Math.PI)<160){txt+= "Tourner à gauche";}
+					    else {txt += "Aller tout droit";}
+					    
+					    if(Math.abs(angle1*180/Math.PI)>100&&Math.abs(angle1*180/Math.PI)<260) {
+					    	txt += " avant " + valpro;
+					    }else if(Math.abs(angle1*180/Math.PI)<80||Math.abs(angle1*180/Math.PI)>280){
+					    	txt += " après " + valpro;
 					    }else {
-					    	System.out.println("Tourner au niveau de " + valpro);
+					    	txt += " au niveau de " + valpro;
 					    }
+					    System.out.println(txt);
+					    txtlst.add(txt);
+					    System.out.println(txtlst);
 					    
 					} catch (Exception e) {
 						e.printStackTrace();
