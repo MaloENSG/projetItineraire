@@ -39,10 +39,12 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,9 +54,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import org.geotools.geometry.jts.JTS;
@@ -64,8 +64,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import ElementInterface.RectPanel;
-import ElementInterface.TextPan;
+import eu.ensg.ign.Itineraire;
+import eu.ensg.ign.Portion;
+import eu.ensg.ign.Resultat;
+import eu.ensg.ign.Step;
 
 
 
@@ -161,9 +163,12 @@ public class MapPanel extends JPanel {
     	        double X0 = -20037508;
                 double Y0 = 20037508;
     	        if (coord != null) {
+    	        	log.log(Level.INFO, "coord " + coord[0] + " " + coord[1]);
     	            X0 = coord[0];
                     Y0 = coord[1];
-    	        } 
+    	        } else {
+    	        	log.log(Level.INFO, "no coord ");
+    	        }
     	        
     	        double X = targetGeometry.getX();
     	        double Y = targetGeometry.getY();
@@ -182,13 +187,19 @@ public class MapPanel extends JPanel {
 	            e.printStackTrace();
 	            return null;
 	        }
-	        
-	    } else {
-	        zoom = 18; 
-	        xtile = 90241;
-	        String url = tileServer.getURL() + "TILEMATRIX=" + zoom + "&TILEROW=" + xtile + "&TILECOL=132877";
-	        return url;
 	    }
+	    // 
+	    if (zoom == 0) {
+	        zoom = 18; 
+	    }
+	    if (xtile == 0) {
+	    	xtile = 90241; 
+	    }
+	    if (ytile == 0) {
+	    	ytile = 132877;
+	    }
+        String url = tileServer.getURL() + "TILEMATRIX=" + zoom + "&TILEROW=" + ytile + "&TILECOL=" + xtile;
+        return url;
 	}
 
 	//-------------------------------------------------------------------------
@@ -245,7 +256,7 @@ public class MapPanel extends JPanel {
         }
 
 	    setLayout(new MapLayout());
-	    setOpaque(false);
+	    setOpaque(true);
 	    setBackground(new Color(0xc0, 0xc0, 0xc0));
 	    add(overlayPanel);
 	    add(controlPanel);
@@ -416,7 +427,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() + 1);
-		setMapPosition(mapPosition.x * 2 + dx, mapPosition.y * 2 + dy);
+		setMapPosition(mapPosition.x * 2+dx, mapPosition.y * 2+dy);
 		repaint();
 	}
 
@@ -427,7 +438,7 @@ public class MapPanel extends JPanel {
 		int dx = pivot.x;
 		int dy = pivot.y;
 		setZoom(getZoom() - 1);
-		setMapPosition((mapPosition.x - dx) / 2, (mapPosition.y - dy) / 2);
+		setMapPosition((mapPosition.x-dx ) / 2, (mapPosition.y-dy) / 2);
 		repaint();
 	}
 
@@ -456,7 +467,8 @@ public class MapPanel extends JPanel {
 	}
 
 	public Point getCenterPosition() {
-		return new Point(mapPosition.x + getWidth() / 2, mapPosition.y + getHeight() / 2);
+
+		return new Point(mapPosition.x+getWidth() / 2, mapPosition.y+ getHeight()/2);
 	}
 
 	public void setCenterPosition(Point p) {
@@ -480,31 +492,68 @@ public class MapPanel extends JPanel {
 		Graphics2D g = (Graphics2D) gOrig.create();
 		try {
 			paintInternal(g);
-			paintAppliInstruction(g); // Utilisation de la methode de dessin
+			paintAppliInstruction(g);
 		} finally {
 			g.dispose();
 		}
 	}
 	
+	/**
+	 * @param g2d
+	 */
 	private void paintAppliInstruction(Graphics2D g2d) {
-		// Si besoin !
-		// Ecrire le code de l'appli qui dessine sur la carte
-		
+	
+		g2d. setPaint (Color. red ); 
 		int w = this.getWidth();
 		int h = this.getHeight();
+//		double lon =0.2046;
+//		double lat = 48.01376;
+//		Point centre=getCenterPosition();
+//
+//		
+//		int x=lon2position(lon, getZoom())-centre.x +w/2;
+//		int y=lat2position(lat, getZoom())-centre.y +h/2;
+//
+//	
+//		BasicStroke line = new BasicStroke(8.0f);
+//		g2d.setStroke(line);
+//		g2d.drawLine(x,y, x, y );
+
+			
+		Coordinate C1= new Coordinate(0.2046,48.0137);
+		Coordinate C2 = new Coordinate(0.1839,48.0070);
+		Itineraire iti = new Itineraire(C1, C2);
+			
+		Resultat resultat= iti.getResultat();
+		BasicStroke line = new BasicStroke(2.0f);
+		g2d.setStroke(line);
 		
-		double lon = 0.19556;
-		double lat = 48.00611;
-		Point centre = getCenterPosition();
+
+
+		List<Double[]> coords = resultat.getGeometry().getCoordinates();
+		for (int i =0;i<coords.size()-1; i++) {
+			Double[] point1 = coords.get(i);
+			Double[] point2 = coords.get(i+1);
+				
+			double lon1=point1[0];
+			double lat1=point1[1];
+			double lon2=point2[0];
+			double lat2=point2[1];
+				
+				
+			Point centre=getCenterPosition();
+
+				
+			int x1=lon2position(lon1, getZoom())-centre.x+w/2;
+			int y1=lat2position(lat1, getZoom())-centre.y+h/2;
+			int x2=lon2position(lon2, getZoom())-centre.x+w/2;
+			int y2=lat2position(lat2, getZoom())-centre.y+h/2;
+
+			g2d.drawLine(x1, y1, x2, y2 );
+			
 		
-		int x = lon2position(lon,getZoom()) - centre.x + getWidth()/2;
-		int y = lat2position(lat,getZoom()) - centre.y + getWidth()/2;
-		
-		
-		g2d.setPaint (Color.red);
-		g2d.drawLine(x, y, x+5, y+5);
+		}
 	}
-	
 	
 	private static final class Painter {
 		private final int zoom;
@@ -570,7 +619,7 @@ public class MapPanel extends JPanel {
 				if (getScale() == 1d && mapPanel.magnifyRegion != null) {
 					Rectangle magnifyRegion = new Rectangle(mapPanel.magnifyRegion);
 					magnifyRegion.translate(-mapPosition.x, -mapPosition.y);
-					g.setColor(Color.red);
+					g.setColor(Color.yellow);
 				}
 			} finally {
 				g.dispose();
@@ -594,8 +643,7 @@ public class MapPanel extends JPanel {
 				TileServer tileServer = mapPanel.getTileServer();
 				Image image = cache.get(tileServer, x, y, zoom);
 				if (image == null) {
-				    Point.Double d = mapPanel.getLongitudeLatitude(new Point((x*TILE_SIZE),(y*TILE_SIZE)));
-				    final String urlAddress = getTileString(mapPanel, mapPanel.tileServer, x, y, zoom, d);
+				    final String urlAddress = getTileString(mapPanel, mapPanel.tileServer, x, y, zoom, null);
 					try {
 						URL url = new URL(urlAddress);
 						// System.out.println(url);
@@ -622,6 +670,11 @@ public class MapPanel extends JPanel {
 
 
 	}
+
+	private int getHeigth() {
+		return super.getHeight();
+	}
+
 
 	private void paintInternal(Graphics2D g) {
 		stats.reset();
@@ -1260,6 +1313,9 @@ public class MapPanel extends JPanel {
 			g.drawString(value, 150, y);
 		}
 	}
+	
+	
+	
 
 	public final class ControlPanel extends JPanel {
 
@@ -1282,13 +1338,6 @@ public class MapPanel extends JPanel {
 			b.setRolloverIcon(new ImageIcon(hl));
 			return b;
 		}
-		
-		private JButton makeButtonIt(Action action) {
-			JButton b = new JButton(action);
-			
-			
-			return b;
-		}
 
 		public ControlPanel() {
 			setOpaque(false);
@@ -1298,7 +1347,7 @@ public class MapPanel extends JPanel {
 
 			Action zoomInAction = new AbstractAction() {
 				{
-					String text = "Zoom";
+					String text = "Zoom In";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makePlus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1310,7 +1359,7 @@ public class MapPanel extends JPanel {
 			};
 			Action zoomOutAction = new AbstractAction() {
 				{
-					String text = "Dezoom";
+					String text = "Zoom Out";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeMinus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1323,7 +1372,7 @@ public class MapPanel extends JPanel {
 
 			Action upAction = new AbstractAction() {
 				{
-					String text = "Haut";
+					String text = "Up";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1336,7 +1385,7 @@ public class MapPanel extends JPanel {
 			};
 			Action downAction = new AbstractAction() {
 				{
-					String text = "Bas";
+					String text = "Down";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, true)));
@@ -1349,7 +1398,7 @@ public class MapPanel extends JPanel {
 			};
 			Action leftAction = new AbstractAction() {
 				{
-					String text = "Gauche";
+					String text = "Left";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1362,84 +1411,30 @@ public class MapPanel extends JPanel {
 			};
 			Action rightAction = new AbstractAction() {
 				{
-					String text = "Droite";
+					String text = "Right";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), true, false)));
 				}
-				
 
 				public void actionPerformed(ActionEvent e) {
 					translateMapPosition(+MOVE_STEP, 0);
 					MapPanel.this.repaint();
 				}
 			};
-			//======
-			//======
-			
-			JPanel coordarr = new JPanel(new BorderLayout());
-			coordarr.setOpaque(false);
-			
-			
 			JPanel moves = new JPanel(new BorderLayout());
 			moves.setOpaque(false);
 			JPanel zooms = new JPanel(new BorderLayout(0, 0));
 			zooms.setOpaque(false);
-			JPanel naviguer = new JPanel(new BorderLayout());
-			naviguer.setOpaque(false);
-			
-			zooms.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
+			zooms.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
 			moves.add(makeButton(upAction), BorderLayout.NORTH);
 			moves.add(makeButton(leftAction), BorderLayout.WEST);
 			moves.add(makeButton(downAction), BorderLayout.SOUTH);
 			moves.add(makeButton(rightAction), BorderLayout.EAST);
 			zooms.add(makeButton(zoomInAction), BorderLayout.NORTH);
 			zooms.add(makeButton(zoomOutAction), BorderLayout.SOUTH);
-			naviguer.add(moves, BorderLayout.NORTH);
-			naviguer.add(zooms, BorderLayout.SOUTH);
-			add(naviguer, BorderLayout.NORTH);
-			
-			//coords.add(makeButtonIt(upAction), BorderLayout.NORTH);
-			//add(coords, BorderLayout.SOUTH);
-			JPanel coorddep = new JPanel(new BorderLayout());
-			coorddep.setOpaque(false);
-			JPanel deplong = new JPanel(new BorderLayout());
-			deplong.setOpaque(false);
-			JPanel deplat = new JPanel(new BorderLayout());
-			deplat.setOpaque(false);
-			
-			
-			JLabel t1, long1, lat1;
-			
-		    t1 = new JLabel();
-		    t1.setBounds(45,175,100,30);
-		    t1.setText("Point de Départ");
-		    long1 = new JLabel();
-		    JTextField coordlong1 = new JTextField();
-		    long1.setBounds(45,175,100,30);
-		    long1.setText("Longitude ");
-		    lat1 = new JLabel();
-		    JTextField coordlat1 = new JTextField();
-		    lat1.setBounds(45,175,100,30);
-		    lat1.setText("Latitude   ");
-		    deplong.add(long1, BorderLayout.WEST);
-		    deplong.add(coordlong1, BorderLayout.CENTER);
-		    deplat.add(lat1, BorderLayout.WEST);
-		    deplat.add(coordlat1, BorderLayout.CENTER);
-		    coorddep.add(t1, BorderLayout.NORTH);
-		    coorddep.add(deplong, BorderLayout.CENTER);
-		    coorddep.add(deplat, BorderLayout.SOUTH);
-		    add(coorddep, BorderLayout.CENTER);
-			
-			//RectPanel rect = new RectPanel();
-			//add(rect);
-			
-			//RectPanel rect2 = new RectPanel();
-			//add(rect2);
-			
-			//JTextField text = new JTextField();
-	        //text.setBounds(20,160,100,20);
-	        //add(text);
+			add(moves, BorderLayout.NORTH);
+			add(zooms, BorderLayout.SOUTH);
 		}
 
 		public void paint(Graphics gOrig) {
@@ -1452,9 +1447,15 @@ public class MapPanel extends JPanel {
 				g.dispose();
 			}
 			super.paint(gOrig);
+		
+
+		}
+
+		private int geHeigth() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}
-
 
 	private final class MapLayout implements LayoutManager {
 
@@ -1479,7 +1480,10 @@ public class MapPanel extends JPanel {
 				controlPanel.setBounds(20, 20, psize.width, psize.height);
 			}
 		}
+	
+
 	}
+
 
 }
 
