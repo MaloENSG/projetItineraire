@@ -64,7 +64,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
+import eu.ensg.appli.ChoixDepartArrivée;
 import eu.ensg.ign.Itineraire;
+import eu.ensg.ign.PointGéo;
 import eu.ensg.ign.Portion;
 import eu.ensg.ign.Resultat;
 import eu.ensg.ign.Step;
@@ -122,7 +124,13 @@ public class MapPanel extends JPanel {
 	public int wrect = 0;
 	public int hrect = 0;
 	public boolean selectRectangle = false;
-
+	
+	public Point.Double depart;
+	public Point.Double arrivée;
+	public boolean PointDepartChoisi;
+	public boolean PointArrivéeChoisi;
+	public boolean CalculIti;
+	
 	public static double[] RES = new double[22];
 	
 	private PyramideFondOrtho pyramideFondOrtho;
@@ -227,7 +235,11 @@ public class MapPanel extends JPanel {
 	
 	
 	public MapPanel() {
-		
+		this.depart=new Point.Double();
+		this.arrivée= new Point.Double();
+		this.PointArrivéeChoisi= false;
+		this.PointDepartChoisi=false;
+		this.CalculIti=false;
 		// System.setProperty("http.proxyHost", "10.0.4.2");
         // System.setProperty("http.proxyPort", "3128");
 		
@@ -501,57 +513,45 @@ public class MapPanel extends JPanel {
 	/**
 	 * @param g2d
 	 */
-	private void paintAppliInstruction(Graphics2D g2d) {
+	public void paintAppliInstruction(Graphics2D g2d) {
 	
 		g2d. setPaint (Color. red ); 
 		int w = this.getWidth();
 		int h = this.getHeight();
-//		double lon =0.2046;
-//		double lat = 48.01376;
-//		Point centre=getCenterPosition();
-//
-//		
-//		int x=lon2position(lon, getZoom())-centre.x +w/2;
-//		int y=lat2position(lat, getZoom())-centre.y +h/2;
-//
-//	
-//		BasicStroke line = new BasicStroke(8.0f);
-//		g2d.setStroke(line);
-//		g2d.drawLine(x,y, x, y );
-
-			
-		Coordinate C1= new Coordinate(0.2046,48.0137);
-		Coordinate C2 = new Coordinate(0.1839,48.0070);
-		Itineraire iti = new Itineraire(C1, C2);
-			
-		Resultat resultat= iti.getResultat();
-		BasicStroke line = new BasicStroke(2.0f);
-		g2d.setStroke(line);
-		
-
-
-		List<Double[]> coords = resultat.getGeometry().getCoordinates();
-		for (int i =0;i<coords.size()-1; i++) {
-			Double[] point1 = coords.get(i);
-			Double[] point2 = coords.get(i+1);
-				
-			double lon1=point1[0];
-			double lat1=point1[1];
-			double lon2=point2[0];
-			double lat2=point2[1];
-				
-				
-			Point centre=getCenterPosition();
-
-				
-			int x1=lon2position(lon1, getZoom())-centre.x+w/2;
-			int y1=lat2position(lat1, getZoom())-centre.y+h/2;
-			int x2=lon2position(lon2, getZoom())-centre.x+w/2;
-			int y2=lat2position(lat2, getZoom())-centre.y+h/2;
-
-			g2d.drawLine(x1, y1, x2, y2 );
+		if (this.PointDepartChoisi && this.PointArrivéeChoisi && this.CalculIti) {
+//		ChoixDepartArrivée choix = new ChoixDepartArrivée(this);
+			System.out.println("dzd");
+			Itineraire iti = new Itineraire(this.depart,this.arrivée);
+//		iti.setPoints(this);
+			Resultat resultat= iti.getResultat();
+			BasicStroke line = new BasicStroke(2.0f);
+			g2d.setStroke(line);
 			
 		
+
+
+			List<Double[]> coords = resultat.getGeometry().getCoordinates();
+			for (int i =0;i<coords.size()-1; i++) {
+				Double[] point1 = coords.get(i);
+				Double[] point2 = coords.get(i+1);
+				
+				double lon1=point1[0];
+				double lat1=point1[1];
+				double lon2=point2[0];
+				double lat2=point2[1];
+				
+				
+				Point centre=getCenterPosition();
+
+				
+				int x1=lon2position(lon1, getZoom())-centre.x+w/2;
+				int y1=lat2position(lat1, getZoom())-centre.y+h/2;
+				int x2=lon2position(lon2, getZoom())-centre.x+w/2;
+				int y2=lat2position(lat2, getZoom())-centre.y+h/2;
+
+				g2d.drawLine(x1, y1, x2, y2 );
+			
+			}
 		}
 	}
 	
