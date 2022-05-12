@@ -178,9 +178,9 @@ public class MainNoeFaitDesTrucs {
 					    }else {
 					    	txt += " au niveau de " + valpro;
 					    }
-//					    System.out.println(txt);
+					    System.out.println(txt);
 					    txtlst.add(txt);
-//					    System.out.println(txtlst);
+					    System.out.println(txtlst);
 					    
 					} catch (Exception e) {
 						e.printStackTrace();
