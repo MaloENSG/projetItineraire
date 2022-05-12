@@ -21,7 +21,7 @@ public class Distance {
 		double c = 2 * Math.asin(Math.sqrt(a));
 		double rad = 6371; 
 		
-		return rad * c;
+		return rad * c * 1000;
 	} 
 	
 	public static double angl(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3) {

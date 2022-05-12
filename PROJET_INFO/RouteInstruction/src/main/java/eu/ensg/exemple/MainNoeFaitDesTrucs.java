@@ -34,7 +34,6 @@ public class MainNoeFaitDesTrucs {
 				+ "&intermediates=&constraints={\"constraintType\":\"banned\",\"key\":\"wayType\",\"operator\":\"=\",\"value\":\"tunnel\"}"
 				+ "&geometryFormat=geojson&crs=EPSG:4326&getSteps=true&getBbox=true&waysAttributes=nature";
 		String txtJson = HttpClientIgn.request(url);
-		System.out.println(url);
 		
 		Gson gson = new GsonBuilder().create();
 		Resultat itineraire = gson.fromJson(txtJson, Resultat.class);
@@ -67,10 +66,10 @@ public class MainNoeFaitDesTrucs {
 				String nom = step.getAttributes().getNom();
 				String nat = step.getAttributes().getNature();
 				
-				if(nom != "") {txt+="Avancer de "+dist+" m dans "+nom+".";}
-				else {txt+="Avancer de "+dist+" m dans "+nat+".";}
+				if(nom != "") {txt+="Avancer de "+dist+" m dans "+nom+". ";}
+				else {txt+="Avancer de "+dist+" m dans "+nat+". ";}
 				
-				if(o == portion.getSteps().size()) {System.out.println("Vous êtes arrivés dans la bonne rue");}
+				if(o == portion.getSteps().size()) {txtlst.add("Vous êtes arrivés à destination");}
 				else {
 				nompro = portion.getSteps().get(o).getAttributes().getNom();
 				natpro = portion.getSteps().get(o).getAttributes().getNature();
@@ -80,7 +79,7 @@ public class MainNoeFaitDesTrucs {
 					if((angle2*180/Math.PI)>200) {txt += "Continuer à droite dans la même rue";}
 					else if((angle2*180/Math.PI)<160){txt += "Continuer à gauche dans la même rue";}
 					else {txt += "Continuer tout droit dans la même rue";}
-					System.out.println(txt);
+//					System.out.println(txt);
 				}else {
 				
 				//Choix batiment & determination de sa direction visuelle
@@ -92,6 +91,8 @@ public class MainNoeFaitDesTrucs {
 				}
 				
 				dercoord = coords.get(coords.size()-1);
+				
+				for(int k = 0;k<coords.size();k++) {txt+="Il reste "+Math.round(Distance.dist(coords.get(k)[1], coords.get(k)[0], dercoord[1], dercoord[0]))+" m à parcourir dans "+nom+". ";}
 				
 				double E = dercoord[0]+0.002;
 				double O = dercoord[0]-0.002;
@@ -177,9 +178,9 @@ public class MainNoeFaitDesTrucs {
 					    }else {
 					    	txt += " au niveau de " + valpro;
 					    }
-					    System.out.println(txt);
+//					    System.out.println(txt);
 					    txtlst.add(txt);
-					    System.out.println(txtlst);
+//					    System.out.println(txtlst);
 					    
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -188,7 +189,7 @@ public class MainNoeFaitDesTrucs {
 			}
 			}
 			}
-			}
+			}System.out.println(txtlst);
 		}
 
 	}
