@@ -8,6 +8,6 @@ public class Attributes {
 	
 	private String nature;
 	public String getNature() { return this.nature; }
-	public void setStart(String nature) { this.nature = nature; }
+	public void setNature(String nature) { this.nature = nature; }
 
 }

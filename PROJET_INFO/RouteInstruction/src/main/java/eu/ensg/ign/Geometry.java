@@ -1,5 +1,6 @@
 package eu.ensg.ign;
 
+import java.awt.Point;
 import java.util.List;
 
 public class Geometry {
