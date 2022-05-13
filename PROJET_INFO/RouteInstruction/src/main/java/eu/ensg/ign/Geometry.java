@@ -1,9 +1,7 @@
 package eu.ensg.ign;
 
+import java.awt.Point;
 import java.util.List;
-
-import org.locationtech.jts.geom.Coordinate;
-
 
 public class Geometry {
 	

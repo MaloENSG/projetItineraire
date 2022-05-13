@@ -8,6 +8,7 @@ public class Resultat {
 	public void setProfile(String profile) { this.profile = profile; }
 	public String getProfile() { return this.profile; }
 	
+	// ....
 	
 	private List<Portion> portions;
 	public List<Portion> getPortions() { return this.portions; }

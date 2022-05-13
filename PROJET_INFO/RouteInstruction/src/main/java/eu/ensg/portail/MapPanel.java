@@ -43,6 +43,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -64,9 +65,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import eu.ensg.appli.ChoixDepartArrivée;
 import eu.ensg.ign.Itineraire;
-import eu.ensg.ign.PointGéo;
 import eu.ensg.ign.Portion;
 import eu.ensg.ign.Resultat;
 import eu.ensg.ign.Step;
@@ -130,6 +129,9 @@ public class MapPanel extends JPanel {
 	public boolean PointDepartChoisi;
 	public boolean PointArrivéeChoisi;
 	public boolean CalculIti;
+	public List<String> txtlst;
+	public int i;
+
 	
 	public static double[] RES = new double[22];
 	
@@ -237,9 +239,12 @@ public class MapPanel extends JPanel {
 	public MapPanel() {
 		this.depart=new Point.Double();
 		this.arrivée= new Point.Double();
-		this.PointArrivéeChoisi= false;
-		this.PointDepartChoisi=false;
+		this.PointArrivéeChoisi= true;
+		this.PointDepartChoisi= true;
 		this.CalculIti=false;
+		this.txtlst = new ArrayList<String>();
+		this.i=0;
+
 		// System.setProperty("http.proxyHost", "10.0.4.2");
         // System.setProperty("http.proxyPort", "3128");
 		
@@ -303,10 +308,6 @@ public class MapPanel extends JPanel {
 	    RES[21] = 0.0746455354;
 	    
 	}
-
-	
-
-	
 
 	public TileServer getTileServer() {
 		return tileServer;
@@ -505,55 +506,65 @@ public class MapPanel extends JPanel {
 		try {
 			paintInternal(g);
 			paintAppliInstruction(g);
+
 		} finally {
 			g.dispose();
 		}
 	}
 	
+	
+	public Point PointGéo2PointFenêtre (Double[] point) {
+		Point centre=getCenterPosition();
+		int w = this.getWidth();
+		int h = this.getHeight();
+		int x1=lon2position(point[0], getZoom())-centre.x+w/2;
+		int y1=lat2position(point[1], getZoom())-centre.y+h/2;
+		Point point2= new Point (x1,y1);
+		return point2;
+	}
 	/**
 	 * @param g2d
 	 */
 	public void paintAppliInstruction(Graphics2D g2d) {
 	
-		g2d. setPaint (Color. red ); 
-		int w = this.getWidth();
-		int h = this.getHeight();
-		if (this.PointDepartChoisi && this.PointArrivéeChoisi && this.CalculIti) {
-//		ChoixDepartArrivée choix = new ChoixDepartArrivée(this);
-			System.out.println("dzd");
-			Itineraire iti = new Itineraire(this.depart,this.arrivée);
-//		iti.setPoints(this);
-			Resultat resultat= iti.getResultat();
-			BasicStroke line = new BasicStroke(2.0f);
-			g2d.setStroke(line);
-			
 		
-
-
+		if (this.PointDepartChoisi && this.PointArrivéeChoisi && this.CalculIti) {
+			Itineraire iti = new Itineraire(this.depart,this.arrivée);
+			Resultat resultat= iti.getResultat();
+			
+			
 			List<Double[]> coords = resultat.getGeometry().getCoordinates();
+
 			for (int i =0;i<coords.size()-1; i++) {
 				Double[] point1 = coords.get(i);
 				Double[] point2 = coords.get(i+1);
 				
-				double lon1=point1[0];
-				double lat1=point1[1];
-				double lon2=point2[0];
-				double lat2=point2[1];
-				
-				
-				Point centre=getCenterPosition();
+				Point pointfen1= PointGéo2PointFenêtre(point1);
+				Point pointfen2= PointGéo2PointFenêtre(point2);
 
 				
-				int x1=lon2position(lon1, getZoom())-centre.x+w/2;
-				int y1=lat2position(lat1, getZoom())-centre.y+h/2;
-				int x2=lon2position(lon2, getZoom())-centre.x+w/2;
-				int y2=lat2position(lat2, getZoom())-centre.y+h/2;
-
+				int x1=pointfen1.x;
+				int y1=pointfen1.y;
+				int x2=pointfen2.x;
+				int y2=pointfen2.y;
+				
+				g2d. setPaint (Color. red ); 
+				BasicStroke line = new BasicStroke(2.0f);
+				g2d.setStroke(line);
+				
 				g2d.drawLine(x1, y1, x2, y2 );
-			
+
+				g2d. setPaint (Color. blue ); 
+		
+				g2d.setStroke(line);
+				g2d.drawLine(x1, y1, x1, y1);
 			}
 		}
+		
 	}
+				
+
+
 	
 	private static final class Painter {
 		private final int zoom;
@@ -1344,7 +1355,7 @@ public class MapPanel extends JPanel {
 
 			Action zoomInAction = new AbstractAction() {
 				{
-					String text = "Zoom In";
+					String text = "Zoomer";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makePlus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1356,7 +1367,7 @@ public class MapPanel extends JPanel {
 			};
 			Action zoomOutAction = new AbstractAction() {
 				{
-					String text = "Zoom Out";
+					String text = "Dézoomer";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeMinus(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1369,7 +1380,7 @@ public class MapPanel extends JPanel {
 
 			Action upAction = new AbstractAction() {
 				{
-					String text = "Up";
+					String text = "Haut";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1382,7 +1393,7 @@ public class MapPanel extends JPanel {
 			};
 			Action downAction = new AbstractAction() {
 				{
-					String text = "Down";
+					String text = "Bas";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeYArrow(new Color(0xc0, 0xc0, 0xc0)), false, true)));
@@ -1395,7 +1406,7 @@ public class MapPanel extends JPanel {
 			};
 			Action leftAction = new AbstractAction() {
 				{
-					String text = "Left";
+					String text = "Gauche";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), false, false)));
@@ -1408,7 +1419,7 @@ public class MapPanel extends JPanel {
 			};
 			Action rightAction = new AbstractAction() {
 				{
-					String text = "Right";
+					String text = "Doite";
 					putValue(Action.NAME, text);
 					putValue(Action.SHORT_DESCRIPTION, text);
 					putValue(Action.SMALL_ICON, new ImageIcon(flip(makeXArrow(new Color(0xc0, 0xc0, 0xc0)), true, false)));
@@ -1444,15 +1455,9 @@ public class MapPanel extends JPanel {
 				g.dispose();
 			}
 			super.paint(gOrig);
-		
-
-		}
-
-		private int geHeigth() {
-			// TODO Auto-generated method stub
-			return 0;
 		}
 	}
+
 
 	private final class MapLayout implements LayoutManager {
 
