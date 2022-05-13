@@ -5,7 +5,7 @@ Voici quelques indications pour installer et utiliser notre programme d'itinéra
 ## I Manuel d'installation
 
 Pour installer notre programme, veuillez suivre les instructions suivantes :
-- Se placer dans la branche *main* (ou le code commenté dans le ***dépot de code source***).
+- Se placer dans la branche *main* (ou le code commenté accessible dans le ***dépot de code source*** ou dans la branche ***developpMalo***).
 - Télécharger le fichier .Zip **PROJET_INFO** sur votre machine.
 - Décompresser le fichier .Zip et l'importer sous **Eclipse**.
 - lancer le fichier .java nommé **MainExempleAppli.java**.
