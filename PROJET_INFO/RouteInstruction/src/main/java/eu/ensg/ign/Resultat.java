@@ -14,6 +14,7 @@ public class Resultat {
 	public List<Portion> getPortions() { return this.portions; }
 	public void setPortions(List<Portion> portions) { this.portions = portions; }
 	
+	
 	private Geometry geometry;
 	public Geometry getGeometry() { return this.geometry; }
 	public void setGeometry(Geometry geometry) { this.geometry = geometry; }
@@ -27,5 +28,3 @@ public class Resultat {
 		return txt;
 	}
 }
-
-
